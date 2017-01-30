@@ -11,11 +11,6 @@ from odoo.exceptions import ValidationError
 class AccountVoucher(models.Model):
     _inherit = "account.voucher"
 
-    @api.multi
-    def _get_default_operating_unit(self):
-        user = self.env['res.users'].browse(self._uid)
-        return user.default_operating_unit_id
-
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
