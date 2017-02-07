@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-# © 2015 Eficent Business and IT Consulting Services S.L. -
-# Jordi Ballester Alomar
-# © 2015 Serpent Consulting Services Pvt. Ltd. - Sudhir Arya
+# Copyright 2016-17 Eficent Business and IT Consulting Services S.L.
+#   (http://www.eficent.com)
+# Copyright 2016-17 Serpent Consulting Services Pvt. Ltd.
+#   (<http://www.serpentcs.com>)
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
-from openerp.tests import common
+
+from odoo.tests import common
 
 
 class TestHrExpenseOperatingUnit(common.TransactionCase):
@@ -12,6 +14,7 @@ class TestHrExpenseOperatingUnit(common.TransactionCase):
         super(TestHrExpenseOperatingUnit, self).setUp()
         self.res_users_model = self.env['res.users']
         self.hr_expense_model = self.env['hr.expense']
+        self.hr_expense_sheet_model = self.env['hr.expense.sheet']
         self.hr_employee_model = self.env['hr.employee']
 
         self.company = self.env.ref('base.main_company')
@@ -21,7 +24,7 @@ class TestHrExpenseOperatingUnit(common.TransactionCase):
         # Expense Product
         self.product1 = self.env.ref('hr_expense.air_ticket')
 
-        self.grp_hr_user = self.env.ref('base.group_hr_user')
+        self.grp_hr_user = self.env.ref('hr.group_hr_user')
         self.grp_accou_mng = self.env.ref('account.group_account_manager')
         self.grp_account_invoice =\
             self.env.ref('account.group_account_invoice')
@@ -79,21 +82,26 @@ class TestHrExpenseOperatingUnit(common.TransactionCase):
 
     def _create_hr_expense(self, operating_unit, emp):
         """Creates Expense for employee."""
-        expense = self.hr_expense_model.create({
-            'name': " Food Expense ",
+        expense_sheet = self.hr_expense_sheet_model.create({
+            'name': "Traveling Expense",
+            'employee_id': emp.id,
+            'operating_unit_id': operating_unit.id
+            })
+        self.hr_expense_model.create({
+            'name': "Traveling Expense",
             'product_id': self.product1.id,
             'operating_unit_id': operating_unit.id,
             'unit_amount': '10.0',
             'quantity': '5',
-            'employee_id': emp.id
+            'employee_id': emp.id,
+            'sheet_id': expense_sheet.id
             })
-        return expense
+        return expense_sheet
 
-    def _post_journal_entries(self, expense):
+    def _post_journal_entries(self, expense_sheet):
         """Approves the Expense and creates accounting entries."""
-        expense.submit_expenses()
-        expense.approve_expenses()
-        expense.action_move_create()
+        expense_sheet.approve_expense_sheets()
+        expense_sheet.action_sheet_move_create()
 
     def test_security(self):
         # User 2 is only assigned to Operating Unit B2C, and cannot
@@ -105,9 +113,11 @@ class TestHrExpenseOperatingUnit(common.TransactionCase):
                          % self.ou1.name)
 
         # Expense OU should have same OU of its accounting entries
-        self.assertEqual(self.hr_expense1.operating_unit_id.id,
-                         self.hr_expense1.account_move_id.operating_unit_id.id,
+        self.assertEqual(self.hr_expense1.expense_line_ids.operating_unit_id,
+                         self.hr_expense1.account_move_id.line_ids.\
+                            mapped('operating_unit_id'),
                          "Expense OU should match with accounting entries OU")
-        self.assertEqual(self.hr_expense2.operating_unit_id.id,
-                         self.hr_expense2.account_move_id.operating_unit_id.id,
+        self.assertEqual(self.hr_expense2.expense_line_ids.operating_unit_id,
+                         self.hr_expense2.account_move_id.line_ids.\
+                            mapped('operating_unit_id'),
                          "Expense OU should match with accounting entries OU")
