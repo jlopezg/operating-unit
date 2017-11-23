@@ -137,14 +137,15 @@ class StockPicking(models.Model):
     @api.constrains('operating_unit_id', 'picking_type_id')
     def _check_picking_type_operating_unit(self):
         for rec in self:
-            warehouse = rec.picking_type_id.warehouse_id
-            if (rec.picking_type_id and rec.operating_unit_id and
-                    warehouse.operating_unit_id != rec.operating_unit_id):
-                raise UserError(
-                    _('Configuration error\nThe Operating Unit of the picking '
-                      'must be the same as that of the warehouse of the '
-                      'Picking Type.')
-                )
+            if rec.picking_type_id.warehouse_id:
+                if (rec.picking_type_id and rec.operating_unit_id and
+                        rec.picking_type_id.warehouse_id !=
+                        rec.operating_unit_id):
+                    raise UserError(
+                        _('Configuration error. The Operating Unit of the '
+                          'picking must be the same as that of the warehouse '
+                          'of the Picking Type.')
+                    )
 
 
 class StockMove(models.Model):
