@@ -1,0 +1,19 @@
+---Fields in module 'account_operating_unit'---
+account_operating_unit / account.account          / operating_unit_id (many2one)  : DEL relation: operating.unit
+account_operating_unit / account.journal          / operating_unit_id (many2one)  : NEW relation: operating.unit
+# DONE: Move the operating units from account to journal
+
+---XML records in module 'account_operating_unit'---
+NEW ir.rule: account_operating_unit.ir_rule_account_journal_allowed_operating_units
+NEW ir.rule: account_operating_unit.ir_rule_account_payment_allowed_operating_units
+NEW ir.rule: account_operating_unit.ir_rule_invoice_report_allowed_operating_units
+NEW ir.ui.view: account_operating_unit.report_financial_operating_units
+NEW ir.ui.view: account_operating_unit.report_trialbalance_operating_units
+NEW ir.ui.view: account_operating_unit.view_account_invoice_report_search
+NEW ir.ui.view: account_operating_unit.view_account_journal_form
+NEW ir.ui.view: account_operating_unit.view_account_payment_form
+NEW ir.ui.view: account_operating_unit.view_account_payment_search
+NEW ir.ui.view: account_operating_unit.view_account_payment_tree
+NEW ir.ui.view: account_operating_unit.view_account_supplier_payment_tree
+DEL ir.ui.view: account_operating_unit.view_account_form
+# NOTHING TO DO
