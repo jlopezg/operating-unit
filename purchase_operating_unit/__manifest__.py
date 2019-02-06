@@ -11,7 +11,7 @@
     "author": "Eficent, "
               "Serpent Consulting Services Pvt. Ltd.,"
               "Odoo Community Association (OCA)",
-    "website": "http://www.eficent.com",
+    "website": "https://github.com/OCA/operating-unit",
     "category": "Purchase Management",
     "depends": ["stock_operating_unit", "purchase"],
     "license": "LGPL-3",
