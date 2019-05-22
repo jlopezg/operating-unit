@@ -26,8 +26,7 @@ class StockQuant(models.Model):
                  move.location_dest_id.company_id) and
                 move.location_id.company_id ==
                     move.location_dest_id.company_id and
-                    move.operating_unit_id != move.operating_unit_dest_id
-            ):
+                    move.operating_unit_id != move.operating_unit_dest_id):
                 src_company_ctx = dict(
                     force_company=move.location_id.company_id.id
                 )
