@@ -3,7 +3,7 @@
 # - Jordi Ballester Alomar
 # © 2015-17 Serpent Consulting Services Pvt. Ltd. - Sudhir Arya
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
-from openerp import _, api, exceptions, models
+from odoo import _, api, exceptions, models
 
 
 class StockMove(models.Model):
@@ -35,8 +35,10 @@ class StockMove(models.Model):
             credit_line_vals['operating_unit_id'] = (
                 self.operating_unit_id.id or self.operating_unit_dest_id.id
             )
-            if not self.operating_unit_dest_id and not self.operating_unit_id.id:
-                ou = self.picking_id.picking_type_id.warehouse_id.operating_unit_id
+            if (not self.operating_unit_dest_id
+                    and not self.operating_unit_id.id):
+                ou = self.picking_id.picking_type_id.warehouse_id.\
+                    operating_unit_id
                 debit_line_vals['operating_unit_id'] = ou.id
                 credit_line_vals['operating_unit_id'] = ou.id
             return [(0, 0, debit_line_vals), (0, 0, credit_line_vals)]

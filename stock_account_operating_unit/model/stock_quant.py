@@ -3,7 +3,7 @@
 # - Jordi Ballester Alomar
 # © 2015-17 Serpent Consulting Services Pvt. Ltd. - Sudhir Arya
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
-from openerp import api, models
+from odoo import api, models
 
 
 class StockQuant(models.Model):
@@ -22,7 +22,7 @@ class StockQuant(models.Model):
         if move.product_id.valuation == 'real_time':
             # Inter-operating unit moves do not accept to
             # from/to non-internal location
-            if (
+            if (move.location_id.company_id and
                 move.location_id.company_id ==
                     move.location_dest_id.company_id and
                     move.operating_unit_id != move.operating_unit_dest_id
