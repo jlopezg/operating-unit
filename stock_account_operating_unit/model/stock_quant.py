@@ -22,7 +22,8 @@ class StockQuant(models.Model):
         if move.product_id.valuation == 'real_time':
             # Inter-operating unit moves do not accept to
             # from/to non-internal location
-            if (move.location_id.company_id and
+            if ((move.location_id.company_id or
+                 move.location_dest_id.company_id) and
                 move.location_id.company_id ==
                     move.location_dest_id.company_id and
                     move.operating_unit_id != move.operating_unit_dest_id
@@ -45,10 +46,11 @@ class StockQuant(models.Model):
                     move_lines = move._prepare_account_move_line(qty, cost,
                                                                  acc_valuation,
                                                                  acc_valuation)
-                    move_obj.with_context(company_ctx).create({
+                    val_move = move_obj.with_context(company_ctx).create({
                         'journal_id': journal_id,
                         'line_ids': move_lines,
                         'company_id': move.company_id.id,
                         'ref': move.picking_id and move.picking_id.name,
                     })
+                    val_move.post()
         return res
